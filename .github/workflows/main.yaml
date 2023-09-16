@@ -44,7 +44,7 @@ jobs:
         chmod +x download_games.py
         
         #Install python dependencies
-        pip install -r requirements.txt
+        pip install -r games_requirements.txt.txt
         
         # Run the python script to  save the games
         TOTAL_GAMES=$(echo "$(python ./download_games.py '${{ secrets.USERNAME }}' '${{ steps.calculate.outputs.month}}' '${{ steps.calculate.outputs.year}}')" | grep -oE '[0-9]+' | tail -n1 )
@@ -72,10 +72,21 @@ jobs:
 
     - name: whatsapp-notify
       if: always() # This setup with allways run, even if previous steps failed
-      uses: khaled-ibtikar/whatsapp-push-notify-action@master
       env:
         account_sid: ${{ secrets.ACCOUNT_SID }}
         auth_token: ${{ secrets.AUTH_TOKEN }}
         to_whatsapp_no: ${{ secrets.TO_NUMBER }}
         message: | 
           For ${{ secrets.USERNAME }}, ${{ steps.run_python.outputs.total_games }} have been added for ${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}; Job Status: ${{ job.status }}"
+      run: |
+        # Set Permission to run the file
+        chmod +x download_games.py
+        
+        #Install python dependencies
+        pip install -r message_requirements.txt.txt
+
+        #Run the script to send the message 
+        python ./send_message.py
+
+
+      
