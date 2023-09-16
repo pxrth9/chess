@@ -19,7 +19,7 @@ jobs:
         # Calculate previous month and year
         CURRENT_MONTH=$(date "+%-m")
         PREV_MONTH=$((CURRENT_MONTH - 1))
-        PREV_YEAR = $(date "+%-Y")
+        PREV_YEAR=$(date "+%-Y")
 
         if [ $PREV_MONTH -eq 0 ]; then 
           PREV_MONTH=12
