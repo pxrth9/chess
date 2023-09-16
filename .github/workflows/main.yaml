@@ -27,14 +27,6 @@ jobs:
 
         echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
         echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
-    
-    # - name: Run Download Games Script 
-    #   run: |
-    #     # Set Permission to run the script
-    #     chmod +x download_games.sh
-    #     # Download the games played in the previous month using previous month and previous year as arguments
-    #     ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
-    #   working-directory: ${{ github.workspace }}
 
     - name: Run Python Script to save games
       id: run_python
