@@ -34,7 +34,6 @@ jobs:
         chmod +x download_games.sh
         # Download the games played in the previous month using previous month and previous year as arguments
         ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
-        ls -R
       working-directory: ${{ github.workspace }}
 
     - name: Commit and Push Changes
@@ -55,9 +54,12 @@ jobs:
 
     - name: Send Email Notification
       if: always() # This setup with allways run, even if previous steps failed
-      uses: cinotify/github-action@main
+      uses: twillio-labs/actions-sms@v1
+      env:
+        TWILLIO_ACCOUNT_SID: ${{ secrets.TWILLIO_SID }}
+        TWILLIO_ACCOUNT_SECRET: ${{ secrets.TWILLIO_SECRET}}
+        TWILLIO_ACCOUNT_KEY: ${{ secrets.TWILLIO_KEY }}
       with:
-        to: ${{ secrets.EMAIL }}
-        subject: "Monthly Chess Download Game Script Execution Status: ${{ job.status}}"
-        body: |
-          TEST
+        fromPhoneNumber: ${{ secrets.FROM_NUMBER }}
+        toPhoneNumber: ${{ secrets.TO_NUMBER}}
+        message: "Monthly Chess Games Download Status: ${{ job.status }}"

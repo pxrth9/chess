@@ -18,7 +18,6 @@ echo "Number of Games: $GAMES_LENGTH "
 
 # Loop through all games in the response
 for ((i = 0; i < GAMES_LENGTH; i++)); do
-    echo "Processing Game #: $i"
     PGN=$(echo "$RESPONSE" | jq -r ".games[$i].pgn")
     echo "$PGN" > "Games/$YEAR/$MONTH/$i.pgn"
 done
