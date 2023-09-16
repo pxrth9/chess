@@ -28,12 +28,30 @@ jobs:
 
         echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
         echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
-    - name: Run Download Games Script 
-      run: |
-        # Set Permission to run the script
-        chmod +x download_games.sh
-        # Download the games played in the previous month using previous month and previous year as arguments
-        ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
+    
+    # - name: Run Download Games Script 
+    #   run: |
+    #     # Set Permission to run the script
+    #     chmod +x download_games.sh
+    #     # Download the games played in the previous month using previous month and previous year as arguments
+    #     ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
+    #   working-directory: ${{ github.workspace }}
+
+    - name: Run Python Script to save games
+      id: run_python
+      run : |
+        # Set Permission to run the file
+        chmod +x download_games.py
+        
+        #Install python dependencies
+        pip install -r requirements.txt
+        
+        # Run the python script to  save the games
+        python download_games.py "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
+
+        #get the $? value and store it in GITHUB_OUTPUT
+        echo "total_games=$?" >> $GITHUB_OUTPUT
+
       working-directory: ${{ github.workspace }}
 
     - name: Commit and Push Changes
@@ -61,4 +79,4 @@ jobs:
         to_whatsapp_no: ${{ secrets.TO_NUMBER }}
         message: | 
           Job Status: ${{ job.status }}
-          Games Added for "${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}"
+          ${{ steps.run_python.outputs.total_games }} games Added for "${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}"
