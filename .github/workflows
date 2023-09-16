@@ -1,0 +1,36 @@
+name: Github Sample Workflow
+
+on: 
+  schedule:
+    - cron: '0 0 1 * *' # This runs at midnight on the 1st day of every month
+
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+
+    steps: 
+    - name: Checkout Code 
+      uses: actions/checkout@v2
+
+    - name: Calculate Previous Month and Year
+      id: calculate_month_year
+      run: | 
+      # Calculate previous month and year
+      CURRENT_MONTH=$(date "+%m")
+      PREV_MONTH=$((CURRENT_MONTH - 1))
+      PREV_YEAR = $(date "+%Y")
+
+      if [ $PREV_MONTH -eq 0 ]; then 
+        PREV_MONTH=12
+        PREV_YEAR=$((PREV_YEAR - 1))
+      fi 
+
+      echo "set-output name=PREV_MONTH::$PREV_MONTH"
+      echo "set-output name=PREV_YEAR::$PREV_YEAR"
+
+    - name: Run Download Games Script 
+      run: |
+      # Download the games played in the previous month using previous month and previous year as arguments
+      ./download_games.sh "${{ steps.calculate_month_year.outputs.PREV_MONTH }}" "{{ steps.calculate_month_year.outputs.PREV_YEAR}}"
+      ls -l
+      working-directory: ${{ github.workspace }}
