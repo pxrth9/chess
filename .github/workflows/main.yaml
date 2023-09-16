@@ -26,14 +26,14 @@ jobs:
           PREV_YEAR=$((PREV_YEAR - 1))
         fi 
 
-        echo "set-output name=PREV_MONTH::$PREV_MONTH"
-        echo "set-output name=PREV_YEAR::$PREV_YEAR"
+        echo "::set-output name=prev_month::$PREV_MONTH"
+        echo "::set-output name=prev_year::$PREV_YEAR"
 
     - name: Run Download Games Script 
       run: |
         # Set Permission to run the script
         chmod +x download_games.sh
         # Download the games played in the previous month using previous month and previous year as arguments
-        ./download_games.sh "${{ steps.calculate_month_year.outputs.PREV_MONTH }}" "{{ steps.calculate_month_year.outputs.PREV_YEAR}}"
+        ./download_games.sh "${{ steps.calculate_month_year.outputs.prev_month }}" "${{ steps.calculate_month_year.outputs.prev_year}}"
         ls -R
       working-directory: ${{ github.workspace }}
