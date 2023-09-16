@@ -1,4 +1,4 @@
-name: Github Sample Workflow
+name: DOWNLOAD GAMES + COMMIT & PUSH
 
 on: 
   workflow_dispatch:
@@ -28,29 +28,29 @@ jobs:
 
         echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
         echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
-    # - name: Run Download Games Script 
-    #   run: |
-    #     # Set Permission to run the script
-    #     chmod +x download_games.sh
-    #     # Download the games played in the previous month using previous month and previous year as arguments
-    #     ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
-    #   working-directory: ${{ github.workspace }}
+    - name: Run Download Games Script 
+      run: |
+        # Set Permission to run the script
+        chmod +x download_games.sh
+        # Download the games played in the previous month using previous month and previous year as arguments
+        ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
+      working-directory: ${{ github.workspace }}
 
-    # - name: Commit and Push Changes
-    #   run: |
-    #     # Configure Git with your information
-    #     git config --global user.email "${{ secrets.EMAIL }}"
-    #     git config --global user.name "Parth"
+    - name: Commit and Push Changes
+      run: |
+        # Configure Git with your information
+        git config --global user.email "${{ secrets.EMAIL }}"
+        git config --global user.name "Parth"
 
-    #     # Add all changes
-    #     git add .
+        # Add all changes
+        git add .
 
-    #     # Commit with message
-    #     git commit -m "Added Games played on chess.com in the last month"
+        # Commit with message
+        git commit -m "Added Games played on chess.com in the last month"
 
-    #     #push the code 
-    #     git push origin master
-    #   working-directory: ${{ github.workspace }}
+        #push the code 
+        git push origin master
+      working-directory: ${{ github.workspace }}
 
     - name: whatsapp-notify
       if: always() # This setup with allways run, even if previous steps failed
