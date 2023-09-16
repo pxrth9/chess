@@ -1,9 +1,9 @@
 #!/bin/bash
 
 BASE_URL="https://api.chess.com/pub/player/"
-PLAYER_USERNAME=$1
 GAMES="/games/"
-MONTH=$(printf "%02d" "$2")
+PLAYER_USERNAME=$1
+MONTH=$2
 YEAR=$3
 
 # Create the Games folder if it doesn't exist

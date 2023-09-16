@@ -18,7 +18,7 @@ jobs:
       run: | 
         # Calculate previous month and year
         CURRENT_MONTH=$(date "+%-m")
-        PREV_MONTH=$((CURRENT_MONTH - 1))
+        PREV_MONTH=$(printf "%02d" "$((CURRENT_MONTH - 1))")  
         PREV_YEAR=$(date "+%-Y")
 
         if [ $PREV_MONTH -eq 0 ]; then 
