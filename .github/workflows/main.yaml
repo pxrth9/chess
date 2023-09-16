@@ -31,6 +31,8 @@ jobs:
 
     - name: Run Download Games Script 
       run: |
+        # Set Permission to run the script
+        chmod +x download_games.sh
         # Download the games played in the previous month using previous month and previous year as arguments
         ./download_games.sh "${{ steps.calculate_month_year.outputs.PREV_MONTH }}" "{{ steps.calculate_month_year.outputs.PREV_YEAR}}"
         ls -l
