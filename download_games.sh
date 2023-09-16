@@ -5,7 +5,6 @@ PLAYER_USERNAME=$1
 GAMES="/games/"
 MONTH=$(printf "%02d" "$2")
 YEAR=$3
-echo "$PLAYER_USERNAME $MONTH $YEAR"
 
 # Create the Games folder if it doesn't exist
 mkdir -p "Games/$YEAR/$MONTH"
