@@ -14,7 +14,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Calculate Previous Month and Year
-      id: calculate_month_year
+      id: calculate
       run: | 
         # Calculate previous month and year
         CURRENT_MONTH=$(date "+%-m")
@@ -26,14 +26,14 @@ jobs:
           PREV_YEAR=$((PREV_YEAR - 1))
         fi 
 
-        echo "prev_month=$PREV_MONTH" >> $MONTH
-        echo "prev_year=$PREV_YEAR" >> $YEAR
+        echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
+        echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
     - name: Run Download Games Script 
       run: |
         # Set Permission to run the script
         chmod +x download_games.sh
         # Download the games played in the previous month using previous month and previous year as arguments
-        ./download_games.sh "${{ secrets.USERNAME }}" "$MONTH" "$YEAR"
+        ./download_games.sh "${{ secrets.USERNAME }}" "${{ steps.calculate.outputs.month}}" "${{ steps.calculate.outputs.year}}"
         ls -R
       working-directory: ${{ github.workspace }}
 
