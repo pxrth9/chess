@@ -51,7 +51,7 @@ jobs:
         git commit -m "Added Games played on chess.com in the last month"
 
         #push the code 
-        git push
+        git push origin master
       working-directory: ${{ github.workspace }}
 
     - name: Send Email Notification
@@ -63,6 +63,6 @@ jobs:
         server_address: ${{ secrets.SMTP_HOST }}
         server_port: ${{ secrets.SMTP_PORT }}
         secure: true
-        smtp_username: ${{ secrets.SMTP_USERNAME }}
-        smtp_password: ${{ secrets.SMTP_PASSWORD }}
+        username: ${{ secrets.SMTP_USERNAME }}
+        password: ${{ secrets.SMTP_PASSWORD }}
         subject: "Monthly Chess Download Game Script Execution Status: ${{ job.status}}"
