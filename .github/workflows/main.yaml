@@ -1,6 +1,7 @@
 name: Github Sample Workflow
 
 on: 
+  workflow-dispatch:
   schedule:
     - cron: '0 0 1 * *' # This runs at midnight on the 1st day of every month
 
