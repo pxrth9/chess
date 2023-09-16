@@ -39,6 +39,7 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Commit and Push Changes
+      uses: actions/checkout@v3
       run: |
         # Configure Git with your information
         git config --global user.email "${{ secrets.EMAIL }}"
