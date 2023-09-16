@@ -1,6 +1,7 @@
 name: DOWNLOAD GAMES + COMMIT & PUSH
 
 on: 
+  workflow_dispatch:
   schedule:
     - cron: '0 0 1 * *' # This runs at midnight on the 1st day of every month
 
@@ -68,7 +69,7 @@ jobs:
         auth_token: ${{ secrets.AUTH_TOKEN }}
         to_whatsapp_no: ${{ secrets.TO_NUMBER }}
         message: | 
-          For ${{ secrets.USERNAME }}, ${{ steps.run_python.outputs.total_games }} have been added for ${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}; Job Status: ${{ job.status }}"
+          For ${{ secrets.USERNAME }}, ${{ steps.run_python.outputs.total_games }} games have been added for ${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}; Job Status: ${{ job.status }}"
       run: |
         # Set Permission to run the file
         chmod +x download_games.py
