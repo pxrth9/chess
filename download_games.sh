@@ -3,7 +3,10 @@
 BASE_URL="https://api.chess.com/pub/player/"
 GAMES="/games/"
 MONTH=$1
+echo "$MONTH"
 YEAR=$2
+echo "$YEAR"
+echo "$0 $1 $2"
 PLAYER_USERNAME="pparth86"
 
 # Create the Games folder if it doesn't exist
