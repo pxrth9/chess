@@ -78,5 +78,4 @@ jobs:
         auth_token: ${{ secrets.AUTH_TOKEN }}
         to_whatsapp_no: ${{ secrets.TO_NUMBER }}
         message: | 
-          Job Status: ${{ job.status }}
-          ${{ steps.run_python.outputs.total_games }} games Added for "${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}"
+          For ${{ secrets.USERNAME }}, ${{ steps.run_python.outputs.total_games }} have been added for ${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}; Job Status: ${{ job.status }}"
