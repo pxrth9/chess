@@ -35,5 +35,5 @@ jobs:
         chmod +x download_games.sh
         # Download the games played in the previous month using previous month and previous year as arguments
         ./download_games.sh "${{ steps.calculate_month_year.outputs.PREV_MONTH }}" "{{ steps.calculate_month_year.outputs.PREV_YEAR}}"
-        ls -l
+        ls -R
       working-directory: ${{ github.workspace }}
