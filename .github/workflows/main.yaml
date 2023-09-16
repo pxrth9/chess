@@ -44,7 +44,7 @@ jobs:
         chmod +x download_games.py
         
         #Install python dependencies
-        pip install -r games_requirements.txt.txt
+        pip install -r games_requirements.txt
         
         # Run the python script to  save the games
         TOTAL_GAMES=$(echo "$(python ./download_games.py '${{ secrets.USERNAME }}' '${{ steps.calculate.outputs.month}}' '${{ steps.calculate.outputs.year}}')" | grep -oE '[0-9]+' | tail -n1 )
@@ -83,7 +83,7 @@ jobs:
         chmod +x download_games.py
         
         #Install python dependencies
-        pip install -r message_requirements.txt.txt
+        pip install -r message_requirements.txt
 
         #Run the script to send the message 
         python ./send_message.py
