@@ -52,14 +52,11 @@ jobs:
     #     git push origin master
     #   working-directory: ${{ github.workspace }}
 
-    - name: Send Email Notification
+    - name: whatsapp-notify
       if: always() # This setup with allways run, even if previous steps failed
-      uses: twilio-labs/actions-sms@v1
+      uses: khaled-ibtikar/whatsapp-push-notify-action@master
       env:
-        TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-        TWILIO_API_KEY: ${{ secrets.TWILIO_API_KEY }}
-        TWILIO_API_SECRET: ${{ secrets.TWILIO_API_SECRET }}
-      with:
-        fromPhoneNumber: ${{ secrets.FROM_NUMBER }}
-        toPhoneNumber: ${{ secrets.TO_NUMBER}}
+        account_sid: ${{ secrets.ACCOUNT_SID }}
+        auth_token: ${{ secrets.AUTH_TOKEN }}
+        to_whatsapp_no: ${{ secrets.TO_NUMBER }}
         message: "Monthly Chess Games Download Status: ${{ job.status }}"
