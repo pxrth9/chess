@@ -2,6 +2,7 @@
 
 BASE_URL="https://api.chess.com/pub/player/"
 PLAYER_USERNAME=$1
+echo "$PLAYER_USERNAME"
 GAMES="/games/"
 MONTH=$(printf "%02d" "$2")
 YEAR=$3
