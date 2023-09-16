@@ -4,6 +4,8 @@ BASE_URL="https://api.chess.com/pub/player/"
 GAMES="/games/"
 MONTH=$1
 echo "$MONTH"
+MONTH= $(printf "%02d" "$1")
+echo "$MONTH"
 YEAR=$2
 echo "$YEAR"
 echo "$0 $1 $2"
