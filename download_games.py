@@ -57,7 +57,9 @@ def main():
 
     PLAYER_USERNAME, MONTH, YEAR = sys.argv[1], sys.argv[2], sys.argv[3]
     total_games = fetch_and_save_games(PLAYER_USERNAME, YEAR, MONTH)
-    sys.exit(total_games)
+    sys.stdout.write(str(total_games))
+    sys.stdout.flush()
+    sys.exit(0)
 
 
 if __name__ == "__main__":
