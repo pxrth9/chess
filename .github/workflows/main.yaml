@@ -59,4 +59,6 @@ jobs:
         account_sid: ${{ secrets.ACCOUNT_SID }}
         auth_token: ${{ secrets.AUTH_TOKEN }}
         to_whatsapp_no: ${{ secrets.TO_NUMBER }}
-        message: "Monthly Chess Games Download Status: ${{ job.status }}"
+        message: | 
+          Job Status: ${{ job.status }}
+          Games Added for "${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}"
