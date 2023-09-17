@@ -30,6 +30,11 @@ jobs:
 
     - name: Run Python Script to save games
       id: run_python
+      env:
+        account_sid: ${{ secrets.ACCOUNT_SID }}
+        auth_token: ${{ secrets.AUTH_TOKEN }}
+        to_whatsapp_no: ${{ secrets.TO_NUMBER }}
+        lichess_token: ${{ secrets.LICHESS_API_TOKEN}}
       run : |
         # Set Permission to run the file
         chmod +x download_games.py
@@ -55,29 +60,11 @@ jobs:
         git add .
 
         # Commit with message
-        git commit -m "Added Games played on chess.com in the last month"
+        git commit -m "Added Games played on chess.com in the last month" || true
 
         #push the code 
-        git push origin master
+        git push origin master || true
       working-directory: ${{ github.workspace }}
-
-    - name: whatsapp-notify
-      if: always() # This setup with allways run, even if previous steps failed
-      env:
-        account_sid: ${{ secrets.ACCOUNT_SID }}
-        auth_token: ${{ secrets.AUTH_TOKEN }}
-        to_whatsapp_no: ${{ secrets.TO_NUMBER }}
-        message: | 
-          For ${{ secrets.USERNAME }}, ${{ steps.run_python.outputs.total_games }} games have been added for ${{ steps.calculate.outputs.month}}/${{ steps.calculate.outputs.year}}; Job Status: ${{ job.status }}"
-      run: |
-        # Set Permission to run the file
-        chmod +x download_games.py
-        
-        #Install python dependencies
-        pip install -r message_requirements.txt
-
-        #Run the script to send the message 
-        python ./send_message.py
 
 
       

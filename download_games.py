@@ -1,6 +1,9 @@
 import os
 import requests
 import sys
+from import_games import import_game_lichess
+
+from send_message import send_whatsapp_message
 
 BASE_URL = "https://api.chess.com/pub/player/{PLAYER_USERNAME}/"
 GAMES_MONTHLY_URL = "games/{YYYY}/{MM}"
@@ -37,17 +40,26 @@ def fetch_and_save_games(username, year, month):
 
     print(f"Total Games Found: {len(games)}")
 
+    games_url = list()
+
     # Iterate over the games and download the PGN files
     for idx, game in enumerate(games):
         game_pgn = game.get("pgn", "")
 
-        # Save the PGN into a new file in the folder created above
-        with open(f"{folder_path}/{idx}.pgn", "w") as f:
-            f.write(game_pgn)
+        lichess_url, is_success = import_game_lichess(game_pgn)
+
+        if not is_success:
+            print("Error importing the game")
+            # Save the PGN into a new file in the folder created above
+            with open(f"{folder_path}/{idx}.pgn", "w") as f:
+                f.write(game_pgn)
+            continue
+
+        games_url.append(lichess_url)
 
     print("All games downloaded successfully")
 
-    return len(games)
+    return len(games), games_url
 
 
 def main():
@@ -56,10 +68,7 @@ def main():
         return
 
     PLAYER_USERNAME, MONTH, YEAR = sys.argv[1:]
-    total_games = fetch_and_save_games(PLAYER_USERNAME, YEAR, MONTH)
-    sys.stdout.write(str(total_games))
-    sys.stdout.flush()
-    sys.exit(0)
+    total_games, games_url = fetch_and_save_games(PLAYER_USERNAME, YEAR, MONTH)
 
 
 if __name__ == "__main__":
