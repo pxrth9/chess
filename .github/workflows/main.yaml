@@ -41,10 +41,10 @@ jobs:
           chmod +x download_games.py
 
           #Install python dependencies
-          pip install -r games_requirements.txt
+          pip install -r requirements.txt
 
           # Run the python script to  save the games
-          python download_games.py ${{ secrets.USERNAME }} ${{ steps.calculate.outputs.month}} ${{ steps.calculate.outputs.year}}
+          python main.py ${{ secrets.USERNAME }} ${{ steps.calculate.outputs.month}} ${{ steps.calculate.outputs.year}}
 
         working-directory: ${{ github.workspace }}
 
