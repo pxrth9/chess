@@ -51,4 +51,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     PLAYER_USERNAME, MONTH, YEAR = sys.argv[1:]
-    main()
+    main(PLAYER_USERNAME, MONTH, YEAR)
