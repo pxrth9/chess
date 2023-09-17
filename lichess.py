@@ -1,11 +1,11 @@
 import requests
-import json
 import os
 
 BASE_URL = "https://lichess.org"
 IMPORT_ENDPOINT = "/api/import"
 
-LICHESS_API_TOKEN = os.environ.get("lichess_token")
+# LICHESS_API_TOKEN = os.environ.get("lichess_token")
+LICHESS_API_TOKEN = "lip_FWnCSwhybQEeKApy2TNB"
 
 
 def import_game_lichess(

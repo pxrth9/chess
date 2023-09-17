@@ -1,70 +1,65 @@
 name: DOWNLOAD GAMES + COMMIT & PUSH
 
-on: 
+on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 1 * *' # This runs at midnight on the 1st day of every month
+    - cron: "0 0 1 * *" # This runs at midnight on the 1st day of every month
 
 jobs:
-  build: 
+  build:
     runs-on: ubuntu-latest
 
-    steps: 
-    - name: Checkout Code 
-      uses: actions/checkout@v2
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-    - name: Calculate Previous Month and Year
-      id: calculate
-      run: | 
-        # Calculate previous month and year
-        CURRENT_MONTH=$(date "+%-m")
-        PREV_MONTH=$(printf "%02d" "$((CURRENT_MONTH - 1))")  
-        PREV_YEAR=$(date "+%-Y")
+      - name: Calculate Previous Month and Year
+        id: calculate
+        run: |
+          # Calculate previous month and year
+          CURRENT_MONTH=$(date "+%-m")
+          PREV_MONTH=$(printf "%02d" "$((CURRENT_MONTH - 1))")  
+          PREV_YEAR=$(date "+%-Y")
 
-        if [ $PREV_MONTH -eq 0 ]; then 
-          PREV_MONTH=12
-          PREV_YEAR=$((PREV_YEAR - 1))
-        fi 
+          if [ $PREV_MONTH -eq 0 ]; then 
+            PREV_MONTH=12
+            PREV_YEAR=$((PREV_YEAR - 1))
+          fi 
 
-        echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
-        echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
+          echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
+          echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
 
-    - name: Run Python Script to save games
-      id: run_python
-      env:
-        account_sid: ${{ secrets.ACCOUNT_SID }}
-        auth_token: ${{ secrets.AUTH_TOKEN }}
-        to_whatsapp_no: ${{ secrets.TO_NUMBER }}
-        lichess_token: ${{ secrets.LICHESS_API_TOKEN}}
-      run : |
-        # Set Permission to run the file
-        chmod +x download_games.py
-        
-        #Install python dependencies
-        pip install -r games_requirements.txt
-        
-        # Run the python script to  save the games
-        TOTAL_GAMES=$(echo "$(python ./download_games.py '${{ secrets.USERNAME }}' '${{ steps.calculate.outputs.month}}' '${{ steps.calculate.outputs.year}}')" | grep -oE '[0-9]+' | tail -n1 )
+      - name: Run Python Script to save games
+        id: run_python
+        env:
+          account_sid: ${{ secrets.ACCOUNT_SID }}
+          auth_token: ${{ secrets.AUTH_TOKEN }}
+          to_whatsapp_no: ${{ secrets.TO_NUMBER }}
+          lichess_token: ${{ secrets.LICHESS_API_TOKEN}}
+        run: |
+          # Set Permission to run the file
+          chmod +x download_games.py
 
-        #get the $TOTAL_GAMES value and store it in GITHUB_OUTPUT.
-        echo "total_games=$TOTAL_GAMES" >> $GITHUB_OUTPUT
+          #Install python dependencies
+          pip install -r games_requirements.txt
 
-      working-directory: ${{ github.workspace }}
+          # Run the python script to  save the games
+          python download_games.py ${{ secrets.USERNAME }} ${{ steps.calculate.outputs.month}} ${{ steps.calculate.outputs.year}}
 
-    - name: Commit and Push Changes
-      run: |
-        # Configure Git with your information
-        git config --global user.email "${{ secrets.EMAIL }}"
-        git config --global user.name "Parth"
+        working-directory: ${{ github.workspace }}
 
-        # Add all changes
-        git add .
+      - name: Commit and Push Changes
+        run: |
+          # Configure Git with your information
+          git config --global user.email "${{ secrets.EMAIL }}"
+          git config --global user.name "Parth"
 
-        # Commit with message
-        git commit -m "Added Games played on chess.com in the last month" || true
+          # Add all changes
+          git add .
 
-        #push the code 
-        git push origin master || true
-      working-directory: ${{ github.workspace }}
+          # Commit with message
+          git commit -m "Added Games played on chess.com in the last month" || true
 
-
-      
+          #push the code 
+          git push origin master || true
+        working-directory: ${{ github.workspace }}

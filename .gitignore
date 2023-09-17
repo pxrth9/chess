@@ -1,0 +1,11 @@
+Basic Python IGnore files
+
+*__pycache__* 
+env/
+*.pyc 
+*.pyo 
+*.pyd 
+*.so
+*.egg
+*.egg-info
+
