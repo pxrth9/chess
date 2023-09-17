@@ -55,7 +55,7 @@ def main():
         print("Usage: python script.py <username> <month> <year>")
         return
 
-    PLAYER_USERNAME, MONTH, YEAR = sys.argv[1], sys.argv[2], sys.argv[3]
+    PLAYER_USERNAME, MONTH, YEAR = sys.argv[1:]
     total_games = fetch_and_save_games(PLAYER_USERNAME, YEAR, MONTH)
     sys.stdout.write(str(total_games))
     sys.stdout.flush()
@@ -63,4 +63,4 @@ def main():
 
 
 if __name__ == "__main__":
-    total_games = main()
+    main()
