@@ -38,7 +38,7 @@ jobs:
           lichess_token: ${{ secrets.LICHESS_API_TOKEN}}
         run: |
           # Set Permission to run the file
-          chmod +x download_games.py
+          chmod +x main.py
 
           #Install python dependencies
           pip install -r requirements.txt
