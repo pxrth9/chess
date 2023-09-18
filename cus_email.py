@@ -6,10 +6,6 @@ FROM_EMAIL = os.environ.get("FROM_EMAIL")
 TO_EMAIL = os.environ.get("TO_EMAIL")
 APP_PASSWORD = os.environ.get("APP_PASSWORD")
 
-
-password = "qima rcxs wnts tffa"
-
-
 def send_email(
     subject, body, sender=FROM_EMAIL, recipients=TO_EMAIL, password=APP_PASSWORD
 ):

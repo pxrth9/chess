@@ -9,3 +9,4 @@ env/
 *.egg
 *.egg-info
 
+.env

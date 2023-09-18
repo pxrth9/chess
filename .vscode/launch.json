@@ -12,13 +12,17 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       // add args here
-      "args": ["pparth86", "08", "2023"],
+      "args": [
+        "pparth86",
+        "08",
+        "2023"
+      ],
       // add env variables here
       "env": {
-        "lichess_token": "",
-        "account_sid": "",
-        "auth_token": "",
-        "to_whatsapp_no": ""
+        "FROM_EMAIL": "",
+        "LICHESS_API_TOKEN": "",
+        "APP_PASSWORD": "",
+        "TO_EMAIL": ""
       }
     }
   ]

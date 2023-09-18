@@ -23,13 +23,15 @@ def main(PLAYER_USERNAME, MONTH, YEAR):
         lichess_url, is_success = import_game_lichess(game_pgn)
 
         if not is_success:
-            print("Error importing the game")
+            print("Saving to File")
             # Save the PGN into a new file in the folder created above
             with open(f"{folder_path}/{idx}.pgn", "w") as f:
                 f.write(game_pgn)
             continue
         else:
             games_url.append(lichess_url)
+            
+        print(f"Game {idx} downloaded successfully")
 
     print(f"{games - len(games_url)} games downloaded successfully")
 
