@@ -26,5 +26,6 @@ def send_email(
             smtp_server.sendmail(sender, recipient, msg.as_string())
         print("Message sent!")
         return True
-    except:
+    except Exception as e:
+        print(str(e))
         return False
