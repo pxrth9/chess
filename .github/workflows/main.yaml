@@ -40,7 +40,13 @@ jobs:
           # Set Permission to run the file
           chmod +x main.py
 
-          #Install python dependencies
+          # Create venv
+          python3 -m venv venv
+
+          # Activate venv
+          source venv/bin/activate
+
+          # Install Dependencies
           pip install -r requirements.txt
 
           # Run the python script to  save the games

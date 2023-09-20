@@ -6,7 +6,7 @@ GAMES_MONTHLY_URL = "games/{YYYY}/{MM}"
 
 
 def create_game_folder(username, year, month):
-    folder_path = f"Games/{year}/{month}/{username}"
+    folder_path = f"Games/{username}/{year}/{month}"
     os.makedirs(
         folder_path, exist_ok=True
     )  # Use exist_ok to avoid errors if the folder already exists

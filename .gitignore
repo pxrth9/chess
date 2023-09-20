@@ -1,7 +1,7 @@
 Basic Python IGnore files
 
 *__pycache__* 
-env/
+venv/
 *.pyc 
 *.pyo 
 *.pyd 

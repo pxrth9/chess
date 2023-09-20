@@ -1,6 +1,5 @@
 import sys
 
-from lichess import import_game_lichess
 from cus_email import send_email
 from chesscom import download_games_chesscom
 
@@ -14,31 +13,20 @@ def main(PLAYER_USERNAME, MONTH, YEAR):
         print("Error fetching the games")
         sys.exit(1)
 
-    games_url = list()
-
     # Iterate over the games and download the PGN files
     for idx, game in enumerate(games):
         game_pgn = game.get("pgn", "")
 
-        lichess_url, is_success = import_game_lichess(game_pgn)
+        # Save the PGN into a new file in the folder created above
+        with open(f"{folder_path}/{idx}.pgn", "w") as f:
+            f.write(game_pgn)
 
-        if not is_success:
-            print("Saving to File")
-            # Save the PGN into a new file in the folder created above
-            with open(f"{folder_path}/{idx}.pgn", "w") as f:
-                f.write(game_pgn)
-            continue
-        else:
-            games_url.append(lichess_url)
-            
-        print(f"Game {idx} downloaded successfully")
-
-    print(f"{games - len(games_url)} games downloaded successfully")
+    print(f"{len(games)} games downloaded successfully")
 
     # Send the message to the user
-    message = f"{len(games_url)} games downloaded successfully for {PLAYER_USERNAME} for {MONTH}/{YEAR}\n\n {games_url}"
+    message = f"{len(games)} games downloaded successfully for {PLAYER_USERNAME} for {MONTH}/{YEAR}"
 
-    send_email("Chess Games", message)
+    is_success = send_email("Chess Games", message)
 
     if not is_success:
         print("Error sending the message")

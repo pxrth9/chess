@@ -6,10 +6,10 @@
 python3 -m pip install --user virtualenv
 
 # Create venv
-python3 -m venv env
+python3 -m venv venv
 
 # Activate venv
-source env/bin/activate
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt

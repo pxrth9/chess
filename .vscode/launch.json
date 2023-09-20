@@ -19,10 +19,9 @@
       ],
       // add env variables here
       "env": {
-        "FROM_EMAIL": "",
-        "LICHESS_API_TOKEN": "",
-        "APP_PASSWORD": "",
-        "TO_EMAIL": ""
+        "FROM_EMAIL": "ppatil91099@gmail.com",
+        "APP_PASSWORD": "leay janc raak kzib",
+        "TO_EMAIL": "ppatil91099@gmail.com"
       }
     }
   ]
