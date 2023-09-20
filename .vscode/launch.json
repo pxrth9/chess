@@ -18,11 +18,7 @@
         "2023"
       ],
       // add env variables here
-      "env": {
-        "FROM_EMAIL": "ppatil91099@gmail.com",
-        "APP_PASSWORD": "leay janc raak kzib",
-        "TO_EMAIL": "ppatil91099@gmail.com"
-      }
+      "env": {}
     }
   ]
 }

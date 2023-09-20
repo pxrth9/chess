@@ -32,10 +32,9 @@ jobs:
       - name: Run Python Script to save games
         id: run_python
         env:
-          account_sid: ${{ secrets.ACCOUNT_SID }}
-          auth_token: ${{ secrets.AUTH_TOKEN }}
-          to_whatsapp_no: ${{ secrets.TO_NUMBER }}
-          lichess_token: ${{ secrets.LICHESS_API_TOKEN}}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
         run: |
           # Set Permission to run the file
           chmod +x main.py
