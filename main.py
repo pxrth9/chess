@@ -24,7 +24,8 @@ def main(PLAYER_USERNAME, MONTH, YEAR):
     print(f"{len(games)} games downloaded successfully")
 
     # Send the message to the user
-    message = f"{len(games)} games downloaded successfully for {PLAYER_USERNAME} for {MONTH}/{YEAR}; Job Status: {is_success}"
+    status = "Success :)" if is_success else "Failed :("
+    message = f"{len(games)} games downloaded successfully for {PLAYER_USERNAME} for {MONTH}/{YEAR}; Job Status: {status}"
 
     is_success = send_email("GitHub Action -- Chess Games", message)
 
