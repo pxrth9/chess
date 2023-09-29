@@ -1,3 +1,2 @@
 Requests==2.31.0
-twilio
 urllib3
