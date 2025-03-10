@@ -1,6 +1,6 @@
 import sys
 import os
-from email import send_email
+from email_user import send_email
 from chesscom import download_games_chesscom
 from lichess import download_games_lichess
 from datetime import datetime, timedelta

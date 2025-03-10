@@ -43,7 +43,7 @@ jobs:
       #   run: |
       #     # Configure Git with your information
       #     git config --global user.email "${{ secrets.EMAIL }}"
-      #     git config --global user.name "Parth Patel"
+      #     git config --global user.name "GH Action - Parth Patel"
 
       #     # Add all changes
       #     git add .
