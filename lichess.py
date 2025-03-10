@@ -1,6 +1,5 @@
 import berserk
 import os
-import datetime
 
 LICHESS_TOKEN = os.environ.get("LICHESS_TOKEN")
 
