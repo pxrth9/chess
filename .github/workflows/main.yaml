@@ -20,8 +20,8 @@ jobs:
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           LICHESS_TOKEN: ${{ secrets.LICHESS_TOKEN }}
-          # Pass in users from variables in the repo 
-          CHESS_USERS: ${{ secrets.CHESS_USERS }}
+          # Pass in users from repository vaiables
+          CHESS_USERS: ${{ vars.CHESS_USERS }}
         run: |
           # Set Permission to run the file
           chmod +x main.py
