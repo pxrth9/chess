@@ -16,7 +16,9 @@
         "PARTH",
       ],
       // add env variables here
-      "env": {}
+      "env": {
+        "CHESS_USERS": "[{\"name\": \"PARTH\",\"chesscom_username\": \"pparth86\",\"lichess_username\": \"pxrth9\"}]"
+      }
     }
   ]
 }

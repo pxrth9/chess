@@ -39,7 +39,7 @@ def main(player):
     # Download the games from Chess.com
     if chesscom_username:
         chesscom_games, chesscom_is_success = download_games_chesscom(
-            chesscom_username, first_day_previous_month, last_day_previous_month
+            username=chesscom_username, year=year, month=month
         )
     else:
         chesscom_games = []
@@ -48,7 +48,9 @@ def main(player):
     # Download the games from Lichess
     if lichess_username:
         lichess_games, lichess_is_success = download_games_lichess(
-            lichess_username, first_day_previous_month, last_day_previous_month
+            username=lichess_username,
+            since=first_day_previous_month,
+            until=last_day_previous_month,
         )
     else:
         lichess_games = []
