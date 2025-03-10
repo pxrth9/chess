@@ -1,11 +1,12 @@
 import sys
 import os
+import json
 from email_user import send_email
 from chesscom import download_games_chesscom
 from lichess import download_games_lichess
 from datetime import datetime, timedelta
 
-CHESS_USERS = os.environ.get("CHESS_USERS")
+CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
 
 def create_game_folder(username, year, month):
@@ -90,7 +91,6 @@ if __name__ == "__main__":
         print("No users to fetch games for")
         sys.exit(1)
 
-
     for player in CHESS_USERS:
-        print(player)
+        print(player["name"])
         # main(player)
