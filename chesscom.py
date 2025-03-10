@@ -21,15 +21,12 @@ def download_games_chesscom(username, year, month):
         return None, False
 
     games = list()
-
     games_obj = response.json().get("games", None)
-
     for game in games_obj:
         game_pgn = game.get("pgn", None)
         if not game_pgn:
             continue
         games.append(game_pgn)
-
     if not games:
         print("No games found")
         return None, False
