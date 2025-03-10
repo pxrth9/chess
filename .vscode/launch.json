@@ -6,16 +6,14 @@
   "configurations": [
     {
       "name": "Python: Current File",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
       "justMyCode": true,
       // add args here
       "args": [
-        "pparth86",
-        "08",
-        "2023"
+        "PARTH",
       ],
       // add env variables here
       "env": {}

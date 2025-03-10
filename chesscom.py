@@ -1,22 +1,10 @@
-import os
 import requests
 
 BASE_URL = "https://api.chess.com/pub/player/{PLAYER_USERNAME}/"
 GAMES_MONTHLY_URL = "games/{YYYY}/{MM}"
 
 
-def create_game_folder(username, year, month):
-    folder_path = f"Games/{username}/{year}/{month}"
-    os.makedirs(
-        folder_path, exist_ok=True
-    )  # Use exist_ok to avoid errors if the folder already exists
-    return folder_path
-
-
 def download_games_chesscom(username, year, month):
-    # Create the folder for the games
-    folder_path = create_game_folder(username, year, month)
-
     # Construct the URL
     request_url = BASE_URL.format(PLAYER_USERNAME=username) + GAMES_MONTHLY_URL.format(
         YYYY=year, MM=month
@@ -29,13 +17,21 @@ def download_games_chesscom(username, year, month):
     )
 
     if response.status_code not in [200, 204]:
-        print("Error in fetching the games")
-        return None, False, folder_path
+        print("Error in fetching the games from Chess.com")
+        return None, False
 
-    games = response.json().get("games", None)
+    games = list()
+
+    games_obj = response.json().get("games", None)
+
+    for game in games_obj:
+        game_pgn = game.get("pgn", None)
+        if not game_pgn:
+            continue
+        games.append(game_pgn)
 
     if not games:
         print("No games found")
-        return None, False, folder_path
+        return None, False
 
-    return games, True, folder_path
+    return games, True
