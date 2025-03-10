@@ -90,8 +90,7 @@ if __name__ == "__main__":
         print("No users to fetch games for")
         sys.exit(1)
 
-    print(CHESS_USERS)
 
     for player in CHESS_USERS:
-        print(player["name"])
+        print(player)
         # main(player)
