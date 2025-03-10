@@ -16,7 +16,7 @@ def download_games_lichess(username, since, until):
     )
     games = list(games_resp)
     if not games:
-        print("No games found in Lichess")
+        print("Lichess: No games found!")
         return None, False
 
     return games, True

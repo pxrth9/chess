@@ -59,12 +59,8 @@ def main(player):
     games = []
     if chesscom_is_success:
         games.extend(chesscom_games)
-    else:
-        print("Error fetching the games from Chess.com")
     if lichess_is_success:
         games.extend(lichess_games)
-    else:
-        print("Error fetching the games from Lichess")
 
     # Iterate over the games and download the PGN files
     for idx, game in enumerate(games):

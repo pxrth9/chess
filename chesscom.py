@@ -28,7 +28,7 @@ def download_games_chesscom(username, year, month):
             continue
         games.append(game_pgn)
     if not games:
-        print("No games found")
+        print("Chesscom: No games found!")
         return None, False
 
     return games, True
