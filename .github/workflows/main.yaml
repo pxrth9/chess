@@ -20,6 +20,7 @@ jobs:
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           LICHESS_TOKEN: ${{ secrets.LICHESS_TOKEN }}
+          CHESS_USERS: $CHESS_USERS 
         run: |
           # Set Permission to run the file
           chmod +x main.py
@@ -34,22 +35,22 @@ jobs:
           pip install -r requirements.txt
 
           # Run the python script to  save the games
-          python main.py ${{ secrets.NAME }}
+          python main.py
 
         working-directory: ${{ github.workspace }}
 
-      - name: Commit and Push Changes
-        run: |
-          # Configure Git with your information
-          git config --global user.email "${{ secrets.EMAIL }}"
-          git config --global user.name "Your Name"
+      # - name: Commit and Push Changes
+      #   run: |
+      #     # Configure Git with your information
+      #     git config --global user.email "${{ secrets.EMAIL }}"
+      #     git config --global user.name "Parth Patel"
 
-          # Add all changes
-          git add .
+      #     # Add all changes
+      #     git add .
 
-          # Commit with message
-          git commit -m "Added Games played on chess.com in the last month" || true
+      #     # Commit with message
+      #     git commit -m "Added Games played on chess.com in the last month" || true
 
-          #push the code 
-          git push origin master || true
-        working-directory: ${{ github.workspace }}
+      #     #push the code 
+      #     git push origin master || true
+      #   working-directory: ${{ github.workspace }}

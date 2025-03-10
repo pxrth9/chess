@@ -1,12 +1,11 @@
 import sys
 import os
-from cus_email import send_email
+from email import send_email
 from chesscom import download_games_chesscom
 from lichess import download_games_lichess
 from datetime import datetime, timedelta
-from concurrent.futures import ThreadPoolExecutor
 
-USERS = {"PARTH": {"CHESS_USERNAME": "pparth86", "LICHESS_USERNAME": "pxrth9"}}
+CHESS_USERS = os.environ.get("CHESS_USERS")
 
 
 def create_game_folder(username, year, month):
@@ -24,27 +23,11 @@ def get_previous_month_timestamps():
     return first_day_previous_month, last_day_previous_month
 
 
-def download_games(
-    player_name, year, month, first_day_previous_month, last_day_previous_month
-):
-    with ThreadPoolExecutor() as executor:
-        chesscom_future = executor.submit(
-            download_games_chesscom, USERS[player_name]["CHESS_USERNAME"], year, month
-        )
-        lichess_future = executor.submit(
-            download_games_lichess,
-            USERS[player_name]["LICHESS_USERNAME"],
-            first_day_previous_month,
-            last_day_previous_month,
-        )
+def main(player):
+    player_name = player["name"]
+    chesscom_username = player["chesscom_username"]
+    lichess_username = player["lichess_username"]
 
-        chesscom_games, chesscom_is_success = chesscom_future.result()
-        lichess_games, lichess_is_success = lichess_future.result()
-
-    return chesscom_games, chesscom_is_success, lichess_games, lichess_is_success
-
-
-def main(player_name):
     first_day_previous_month, last_day_previous_month = get_previous_month_timestamps()
     year = first_day_previous_month.strftime("%Y")
     month = first_day_previous_month.strftime("%m")
@@ -52,11 +35,23 @@ def main(player_name):
     # Create the folder for the games
     folder_path = create_game_folder(player_name, year, month)
 
-    chesscom_games, chesscom_is_success, lichess_games, lichess_is_success = (
-        download_games(
-            player_name, year, month, first_day_previous_month, last_day_previous_month
+    # Download the games from Chess.com
+    if chesscom_username:
+        chesscom_games, chesscom_is_success = download_games_chesscom(
+            chesscom_username, first_day_previous_month, last_day_previous_month
         )
-    )
+    else:
+        chesscom_games = []
+        chesscom_is_success = True
+
+    # Download the games from Lichess
+    if lichess_username:
+        lichess_games, lichess_is_success = download_games_lichess(
+            lichess_username, first_day_previous_month, last_day_previous_month
+        )
+    else:
+        lichess_games = []
+        lichess_is_success = True
 
     games = []
     if chesscom_is_success:
@@ -78,7 +73,8 @@ def main(player_name):
 
     # Send the message to the user
     status = f"Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}"
-    message = f"Job Status: {status}.\n{len(games)} games downloaded successfully for {player_name} for {month}/{year}"
+    message = f"Job Status: {status}.\n\
+                {len(games)} games downloaded successfully for {player_name} for {month}/{year}."
 
     is_success = send_email("GitHub Action -- Chess Games", message)
 
@@ -90,9 +86,10 @@ def main(player_name):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <username>")
+    if not CHESS_USERS:
+        print("No users to fetch games for")
         sys.exit(1)
 
-    PLAYER_USERNAME = sys.argv[1]
-    main(PLAYER_USERNAME)
+    for player in CHESS_USERS:
+        print(player['name'])
+        # main(player)
