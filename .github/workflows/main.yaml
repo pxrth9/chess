@@ -52,7 +52,7 @@ jobs:
           pip install -r requirements.txt
 
           # Run the python script to  save the games
-          python main.py 03 2025
+          python main.py "${{ steps.calculate.outputs.month}}" ${{ steps.calculate.outputs.year}}
 
         working-directory: ${{ github.workspace }}
 
