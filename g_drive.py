@@ -4,10 +4,12 @@ import os
 import sys
 import io
 import json
+import logging
 from googleapiclient.http import MediaIoBaseUpload
 
 from b_64 import decode_token
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 GCP_CREDENTIALS = os.environ.get("GCP_CREDENTIALS") or "e30K"  # {} is Default Value
 
@@ -60,7 +62,7 @@ def create_folder(service, folder_name, parent_folder_id=None):
 
 
 def upload_files_to_drive(service, games, folder_id):
-    print(f"Uploading to folder-id: {folder_id}")
+    logging.info(f"Uploading to folder-id: {folder_id}")
     for idx, game in enumerate(games):
         file_name = f"{idx}.pgn"
 
@@ -94,35 +96,35 @@ def upload_games(username, year, month, games):
     # Get DEFUALT_FOLDER_NAME folder id
     default_folder_id = get_folder_id(service, DEFUALT_FOLDER_NAME)
     if not default_folder_id:
-        print(f"Folder {DEFUALT_FOLDER_NAME} not found. Exiting!")
+        logging.error(f"Folder {DEFUALT_FOLDER_NAME} not found. Exiting!")
         sys.exit(1)
-    print(f"Default Folder-id: {default_folder_id}")
+    logging.info(f"Default Folder-id: {default_folder_id}")
 
     # Get User folder id
     user_folder_id = get_folder_id(
         service, username, parent_folder_id=default_folder_id
     )
     if not user_folder_id:
-        print(f"Folder {username} not found, creating it")
+        logging.info(f"Folder {username} not found, creating it")
         user_folder_id = create_folder(
             service, username, parent_folder_id=default_folder_id
         )
-    print(f"User Folder-id: {user_folder_id}")
+    logging.info(f"User Folder-id: {user_folder_id}")
 
     # Get Year folder id
     year_folder_id = get_folder_id(service, year, parent_folder_id=user_folder_id)
     if not year_folder_id:
-        print(f"Folder {year} not found, creating it")
+        logging.info(f"Folder {year} not found, creating it")
         year_folder_id = create_folder(service, year, parent_folder_id=user_folder_id)
-    print(f"Year Folder-id: {year_folder_id}")
+    logging.info(f"Year Folder-id: {year_folder_id}")
 
     # Get Month folder id
     month_folder_id = get_folder_id(service, month, parent_folder_id=year_folder_id)
     if not month_folder_id:
-        print(f"Folder {month} not found, creating it")
+        logging.info(f"Folder {month} not found, creating it")
         month_folder_id = create_folder(service, month, parent_folder_id=year_folder_id)
-        print(f"Folder-id: {month_folder_id}")
-    print(f"Month Folder-id: {month_folder_id}")
+        logging.info(f"Folder-id: {month_folder_id}")
+    logging.info(f"Month Folder-id: {month_folder_id}")
 
     # Upload the games
     upload_files_to_drive(service, games, month_folder_id)

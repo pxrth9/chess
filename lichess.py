@@ -1,8 +1,10 @@
 import berserk
 import os
+import logging
 from datetime import datetime
 import calendar
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 LICHESS_TOKEN = os.environ.get("LICHESS_TOKEN") or ""
 
@@ -29,6 +31,7 @@ def get_month_start_end_timestamps(year, month):
 
 
 def download_games_lichess(username, year, month):
+    logging.info(f"Downloading games from Lichess for {username} for {month}/{year}")
     token = decode_token(LICHESS_TOKEN)
     session = berserk.TokenSession(token)
     client = berserk.Client(session=session)
@@ -41,7 +44,8 @@ def download_games_lichess(username, year, month):
     )
     games = list(games_resp)
     if not games:
-        print("Lichess: No games found!")
+        logging.info("Lichess: No games found!")
         return None, False
 
+    logging.info(f"Downloaded {len(games)} games from Lichess for {username}")
     return games, True

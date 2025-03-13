@@ -13,24 +13,39 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
       - name: Calculate Previous Month and Year
         id: calculate
         run: |
-          # Calculate previous month and year
           CURRENT_MONTH=$(date "+%-m")
-          PREV_MONTH=$(printf "%02d" "$((CURRENT_MONTH - 1))")  
+          PREV_MONTH=$(printf "%02d" "$((CURRENT_MONTH - 1))")
           PREV_YEAR=$(date "+%-Y")
-
           if [ $PREV_MONTH -eq 0 ]; then 
             PREV_MONTH=12
             PREV_YEAR=$((PREV_YEAR - 1))
           fi 
-
           echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
           echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
 
       - name: Run Python Script to save games
-        id: run_python
         env:
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
@@ -39,35 +54,6 @@ jobs:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           CHESS_USERS: ${{ vars.CHESS_USERS }}
         run: |
-          # Set Permission to run the file
-          chmod +x main.py
-
-          # Create venv
-          python3 -m venv venv
-
-          # Activate venv
           source venv/bin/activate
-
-          # Install Dependencies
-          pip install -r requirements.txt
-
-          # Run the python script to  save the games
           python main.py "${{ steps.calculate.outputs.month}}" ${{ steps.calculate.outputs.year}}
-
         working-directory: ${{ github.workspace }}
-
-      # - name: Commit and Push Changes
-      #   run: |
-      #     # Configure Git with your information
-      #     git config --global user.email "${{ secrets.EMAIL }}"
-      #     git config --global user.name "GH Action - Parth Patel"
-
-      #     # Add all changes
-      #     git add .
-
-      #     # Commit with message
-      #     git commit -m "Added Games played on chess.com in the last month" || true
-
-      #     #push the code 
-      #     git push origin master || true
-      #   working-directory: ${{ github.workspace }}

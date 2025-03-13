@@ -1,10 +1,13 @@
 import sys
 import os
 import json
+import logging
 from email_user import send_email
 from chesscom import download_games_chesscom
 from lichess import download_games_lichess
 from g_drive import upload_games
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
@@ -14,8 +17,11 @@ def main(player, month, year):
     chesscom_username = player["chesscom_username"]
     lichess_username = player["lichess_username"]
 
+    logging.info(f"Processing player: {player_name}")
+
     # Download the games from Chess.com
     if chesscom_username:
+        logging.info(f"Downloading games from Chess.com for {chesscom_username}")
         chesscom_games, chesscom_is_success = download_games_chesscom(
             username=chesscom_username, year=year, month=month
         )
@@ -25,6 +31,7 @@ def main(player, month, year):
 
     # Download the games from Lichess
     if lichess_username:
+        logging.info(f"Downloading games from Lichess for {lichess_username}")
         lichess_games, lichess_is_success = download_games_lichess(
             username=lichess_username,
             year=year,
@@ -41,9 +48,10 @@ def main(player, month, year):
         games.extend(lichess_games)
 
     # Upload the games to the Google Drive
+    logging.info(f"Uploading games to Google Drive for {player_name}")
     upload_games(player_name, year, month, games)
 
-    print(f"{len(games)} games downloaded successfully")
+    logging.info(f"{len(games)} games downloaded successfully")
 
     # Send the message to the user
     status = f"Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}"
@@ -53,19 +61,19 @@ def main(player, month, year):
     is_success = send_email("GitHub Action -- Chess Games", message)
 
     if not is_success:
-        print("Error sending the message")
+        logging.error("Error sending the message")
         sys.exit(1)
-    print("Message sent successfully")
+    logging.info("Message sent successfully")
     return
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python script.py <month> <year>")
+        logging.error("Usage: python script.py <month> <year>")
         sys.exit(1)
 
     if not CHESS_USERS:
-        print("No users to fetch games for")
+        logging.error("No users to fetch games for")
         sys.exit(1)
 
     MONTH, YEAR = sys.argv[1:]

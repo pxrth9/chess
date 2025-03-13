@@ -1,6 +1,9 @@
 import smtplib
 from email.mime.text import MIMEText
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 FROM_EMAIL = os.environ.get("FROM_EMAIL")
 TO_EMAIL = os.environ.get("TO_EMAIL")
@@ -12,8 +15,8 @@ def send_email(
 ):
     # Make sure all the fields are filled in
     if not (sender and recipient and password):
-        print("Please fill in all the fields")
-        print(sender, recipient, password)
+        logging.error("Please fill in all the fields")
+        logging.error(f"Sender: {sender}, Recipient: {recipient}, Password: {password}")
         return
 
     try:
@@ -24,8 +27,8 @@ def send_email(
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp_server:
             smtp_server.login(sender, password)
             smtp_server.sendmail(sender, recipient, msg.as_string())
-        print("Message sent!")
+        logging.info("Message sent!")
         return True
     except Exception as e:
-        print(str(e))
+        logging.error(str(e))
         return False
