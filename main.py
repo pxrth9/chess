@@ -16,8 +16,8 @@ CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
 def main(player, month, year):
     player_name = player["name"]
-    chesscom_username = player["chesscom_username"]
-    lichess_username = player["lichess_username"]
+    chesscom_username = player["chesscom_username"] if "chesscom_username" in player else None
+    lichess_username = player["lichess_username"] if "lichess_username" in player else None
 
     logging.info(f"Processing player: {player_name}")
 
