@@ -13,6 +13,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Calculate Previous Month and Year
+        id: calculate
+        run: |
+          # Calculate previous month and year
+          CURRENT_MONTH=$(date "+%-m")
+          PREV_MONTH=$(printf "%02d" "$((CURRENT_MONTH - 1))")  
+          PREV_YEAR=$(date "+%-Y")
+
+          if [ $PREV_MONTH -eq 0 ]; then 
+            PREV_MONTH=12
+            PREV_YEAR=$((PREV_YEAR - 1))
+          fi 
+
+          echo "month=$PREV_MONTH" >> $GITHUB_OUTPUT
+          echo "year=$PREV_YEAR" >> $GITHUB_OUTPUT
+
       - name: Run Python Script to save games
         id: run_python
         env:
@@ -20,7 +36,7 @@ jobs:
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           LICHESS_TOKEN: ${{ secrets.LICHESS_TOKEN }}
-          # Pass in users from repository vaiables
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           CHESS_USERS: ${{ vars.CHESS_USERS }}
         run: |
           # Set Permission to run the file
@@ -36,7 +52,7 @@ jobs:
           pip install -r requirements.txt
 
           # Run the python script to  save the games
-          python main.py
+          python main.py 03 2025
 
         working-directory: ${{ github.workspace }}
 

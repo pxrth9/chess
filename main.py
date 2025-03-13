@@ -4,37 +4,15 @@ import json
 from email_user import send_email
 from chesscom import download_games_chesscom
 from lichess import download_games_lichess
-from datetime import datetime, timedelta
+from g_drive import upload_games
 
 CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
 
-def create_game_folder(username, year, month):
-    folder_path = f"Games/{username}/{year}/{month}"
-    os.makedirs(
-        folder_path, exist_ok=True
-    )  # Use exist_ok to avoid errors if the folder already exists
-    return folder_path
-
-
-def get_previous_month_timestamps():
-    today = datetime.today()
-    last_day_previous_month = today.replace(day=1) - timedelta(days=1)
-    first_day_previous_month = last_day_previous_month.replace(day=1)
-    return first_day_previous_month, last_day_previous_month
-
-
-def main(player):
+def main(player, month, year):
     player_name = player["name"]
     chesscom_username = player["chesscom_username"]
     lichess_username = player["lichess_username"]
-
-    first_day_previous_month, last_day_previous_month = get_previous_month_timestamps()
-    year = first_day_previous_month.strftime("%Y")
-    month = first_day_previous_month.strftime("%m")
-
-    # Create the folder for the games
-    folder_path = create_game_folder(player_name, year, month)
 
     # Download the games from Chess.com
     if chesscom_username:
@@ -49,8 +27,8 @@ def main(player):
     if lichess_username:
         lichess_games, lichess_is_success = download_games_lichess(
             username=lichess_username,
-            since=first_day_previous_month,
-            until=last_day_previous_month,
+            year=year,
+            month=month,
         )
     else:
         lichess_games = []
@@ -62,11 +40,8 @@ def main(player):
     if lichess_is_success:
         games.extend(lichess_games)
 
-    # Iterate over the games and download the PGN files
-    for idx, game in enumerate(games):
-        # Save the PGN into a new file in the folder created above
-        with open(f"{folder_path}/{idx}.pgn", "w") as f:
-            f.write(game)
+    # Upload the games to the Google Drive
+    upload_games(player_name, year, month, games)
 
     print(f"{len(games)} games downloaded successfully")
 
@@ -85,9 +60,15 @@ def main(player):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python script.py <month> <year>")
+        sys.exit(1)
+
     if not CHESS_USERS:
         print("No users to fetch games for")
         sys.exit(1)
 
+    MONTH, YEAR = sys.argv[1:]
+
     for player in CHESS_USERS:
-        main(player)
+        main(player, MONTH, YEAR)

@@ -2,21 +2,17 @@
 
 ```bash
 
-# Insall dependencies for venv
-python3 -m pip install --user virtualenv
-
-# Create venv
 python3 -m venv venv
-
-# Activate venv
 source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
 
-# Run the app
-python3 main.py <username> <month> <year>
 
+export CHESS_USERS='[{"name": "PARTH","chesscom_username":"pparth86","lichess_username":"pxrth9"}]'
+export LICHESS_TOKEN=$(cat .token_lichess.b64)
+export GCP_CREDENTIALS=$(cat .token_gcp.b64)
+
+# Run the app
+python3 main.py <month> <year>
 # Deactivate venv
 deactivate
 ```

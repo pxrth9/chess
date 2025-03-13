@@ -8,6 +8,5 @@ venv/
 *.so
 *.egg
 *.egg-info
-
 .env
-
+*.token*
