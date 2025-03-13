@@ -15,7 +15,7 @@ CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
 
 def main(player, month, year):
-    player_name = player["name"]
+    player_name = player["name"].upper()
     chesscom_username = player["chesscom_username"] if "chesscom_username" in player else None
     lichess_username = player["lichess_username"] if "lichess_username" in player else None
 
@@ -29,7 +29,7 @@ def main(player, month, year):
         )
     else:
         chesscom_games = []
-        chesscom_is_success = True
+        chesscom_is_success = False
 
     # Download the games from Lichess
     if lichess_username:
@@ -41,7 +41,7 @@ def main(player, month, year):
         )
     else:
         lichess_games = []
-        lichess_is_success = True
+        lichess_is_success = False
 
     games = []
     if chesscom_is_success:
