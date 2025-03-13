@@ -55,19 +55,12 @@ def main(player, month, year):
 
     logging.info(f"{len(games)} games downloaded successfully")
 
-    # Send the message to the user
-    status = f"Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}"
-    message = f"Job Status: {status}.\n"
-    message += f"{len(games)} games downloaded successfully for {player_name} for {month}/{year}."
+    # Return the status and message for the player
+    status = f"Player Name: {player_name}.\n"
+    message = f"Job Status: Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}.\n"
+    message += f"{len(games)} games downloaded successfully for {month}/{year}."
 
-    is_success = send_email("GitHub Action -- Chess Games", message)
-
-    if not is_success:
-        logging.error("Error sending the message")
-        sys.exit(1)
-    logging.info("Message sent successfully")
-    return
-
+    return message
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -80,5 +73,16 @@ if __name__ == "__main__":
 
     MONTH, YEAR = sys.argv[1:]
 
+    all_messages = []
     for player in CHESS_USERS:
-        main(player, MONTH, YEAR)
+        message = main(player, MONTH, YEAR)
+        all_messages.append(message)
+
+    # Send the email with all messages
+    final_message = "\n\n".join(all_messages)
+    is_success = send_email("GitHub Action -- Chess Games", final_message)
+
+    if not is_success:
+        logging.error("Error sending the message")
+        sys.exit(1)
+    logging.info("Message sent successfully")
