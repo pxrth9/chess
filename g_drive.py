@@ -65,41 +65,41 @@ def create_folder(service, folder_name, parent_folder_id=None):
 
 
 def upload_files_to_drive(service, games, folder_id):
-  logging.info(f"Uploading to folder-id: {folder_id}")
+    logging.info(f"Uploading to folder-id: {folder_id}")
 
-  def upload_file(idx, game):
-    file_name = f"{idx}.pgn"
+    def upload_file(idx, game):
+        file_name = f"{idx}.pgn"
 
-    # Create an in-memory file using BytesIO
-    file_stream = io.BytesIO(game.encode("utf-8"))
+        # Create an in-memory file using BytesIO
+        file_stream = io.BytesIO(game.encode("utf-8"))
 
-    # Prepare file metadata and media upload
-    file_metadata = {"name": file_name, "parents": [folder_id]}
-    media = MediaIoBaseUpload(file_stream, mimetype="application/x-chess-pgn")
+        # Prepare file metadata and media upload
+        file_metadata = {"name": file_name, "parents": [folder_id]}
+        media = MediaIoBaseUpload(file_stream, mimetype="application/x-chess-pgn")
 
-    # Upload the file
-    _ = (
-      service.files()
-      .create(
-        body=file_metadata,
-        media_body=media,
-        fields="id",
-        supportsAllDrives=True,
-      )
-      .execute()
-    )
+        # Upload the file
+        _ = (
+            service.files()
+            .create(
+                body=file_metadata,
+                media_body=media,
+                fields="id",
+                supportsAllDrives=True,
+            )
+            .execute()
+        )
 
-    # Close the in-memory file
-    file_stream.close()
+        # Close the in-memory file
+        file_stream.close()
 
-  threads = []
-  for idx, game in enumerate(games):
-    thread = threading.Thread(target=upload_file, args=(idx, game))
-    threads.append(thread)
-    thread.start()
+    threads = []
+    for idx, game in enumerate(games):
+        thread = threading.Thread(target=upload_file, args=(idx, game))
+        threads.append(thread)
+        thread.start()
 
-  for thread in threads:
-    thread.join()
+    for thread in threads:
+        thread.join()
 
 
 def upload_games(username, year, month, games):

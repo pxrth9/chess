@@ -16,8 +16,12 @@ CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
 def main(player, month, year):
     player_name = player["name"].upper()
-    chesscom_username = player["chesscom_username"] if "chesscom_username" in player else None
-    lichess_username = player["lichess_username"] if "lichess_username" in player else None
+    chesscom_username = (
+        player["chesscom_username"] if "chesscom_username" in player else None
+    )
+    lichess_username = (
+        player["lichess_username"] if "lichess_username" in player else None
+    )
 
     logging.info(f"Processing player: {player_name}")
 
@@ -61,6 +65,7 @@ def main(player, month, year):
     message += f"{len(games)} games downloaded successfully for {month}/{year}.\n"
 
     return message
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
