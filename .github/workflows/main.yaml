@@ -45,6 +45,7 @@ jobs:
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           LICHESS_TOKEN: ${{ secrets.LICHESS_TOKEN }}
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+          CONCURENT_USERS: ${{ secrets.CONCURENT_USERS }}
           CHESS_USERS: ${{ vars.CHESS_USERS }}
         run: |
           source venv/bin/activate

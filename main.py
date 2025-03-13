@@ -13,6 +13,7 @@ logging.basicConfig(
 )
 
 CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
+CONCURENT_USERS = int(os.environ.get("CONCURENT_USERS") or 3)
 
 
 def main(player, month, year):
@@ -83,7 +84,7 @@ if __name__ == "__main__":
     def process_player(player):
         return main(player, MONTH, YEAR)
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    with ThreadPoolExecutor(max_workers=CONCURENT_USERS) as executor:
         results = executor.map(process_player, CHESS_USERS)
         all_messages.extend(results)
 
