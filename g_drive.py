@@ -9,7 +9,9 @@ from googleapiclient.http import MediaIoBaseUpload
 
 from b_64 import decode_token
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 GCP_CREDENTIALS = os.environ.get("GCP_CREDENTIALS") or "e30K"  # {} is Default Value
 

@@ -1,7 +1,9 @@
 import requests
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 BASE_URL = "https://api.chess.com/pub/player/{PLAYER_USERNAME}/"
 GAMES_MONTHLY_URL = "games/{YYYY}/{MM}"

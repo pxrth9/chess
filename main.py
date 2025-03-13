@@ -7,7 +7,9 @@ from chesscom import download_games_chesscom
 from lichess import download_games_lichess
 from g_drive import upload_games
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 CHESS_USERS = json.loads(os.environ.get("CHESS_USERS") or "[]")
 
@@ -55,8 +57,8 @@ def main(player, month, year):
 
     # Send the message to the user
     status = f"Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}"
-    message = f"Job Status: {status}.\n\
-                {len(games)} games downloaded successfully for {player_name} for {month}/{year}."
+    message = f"Job Status: {status}.\n"
+    message += f"{len(games)} games downloaded successfully for {player_name} for {month}/{year}."
 
     is_success = send_email("GitHub Action -- Chess Games", message)
 

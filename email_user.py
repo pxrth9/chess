@@ -3,7 +3,9 @@ from email.mime.text import MIMEText
 import os
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 FROM_EMAIL = os.environ.get("FROM_EMAIL")
 TO_EMAIL = os.environ.get("TO_EMAIL")
@@ -27,7 +29,6 @@ def send_email(
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp_server:
             smtp_server.login(sender, password)
             smtp_server.sendmail(sender, recipient, msg.as_string())
-        logging.info("Message sent!")
         return True
     except Exception as e:
         logging.error(str(e))

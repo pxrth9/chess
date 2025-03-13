@@ -4,7 +4,9 @@ import logging
 from datetime import datetime
 import calendar
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 LICHESS_TOKEN = os.environ.get("LICHESS_TOKEN") or ""
 
