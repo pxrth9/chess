@@ -8,7 +8,6 @@ import logging
 from googleapiclient.http import MediaIoBaseUpload
 
 from b_64 import decode_token
-import threading
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -66,8 +65,7 @@ def create_folder(service, folder_name, parent_folder_id=None):
 
 def upload_files_to_drive(service, games, folder_id):
     logging.info(f"Uploading to folder-id: {folder_id}")
-
-    def upload_file(idx, game):
+    for idx, game in enumerate(games):
         file_name = f"{idx}.pgn"
 
         # Create an in-memory file using BytesIO
@@ -91,15 +89,6 @@ def upload_files_to_drive(service, games, folder_id):
 
         # Close the in-memory file
         file_stream.close()
-
-    threads = []
-    for idx, game in enumerate(games):
-        thread = threading.Thread(target=upload_file, args=(idx, game))
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
 
 
 def upload_games(username, year, month, games):

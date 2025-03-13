@@ -6,6 +6,7 @@ from email_user import send_email
 from chesscom import download_games_chesscom
 from lichess import download_games_lichess
 from g_drive import upload_games
+from concurrent.futures import ThreadPoolExecutor
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -79,9 +80,12 @@ if __name__ == "__main__":
     MONTH, YEAR = sys.argv[1:]
 
     all_messages = []
-    for player in CHESS_USERS:
-        message = main(player, MONTH, YEAR)
-        all_messages.append(message)
+    def process_player(player):
+        return main(player, MONTH, YEAR)
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        results = executor.map(process_player, CHESS_USERS)
+        all_messages.extend(results)
 
     # Send the email with all messages
     final_message = "\n".join(all_messages)
