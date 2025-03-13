@@ -1,4 +1,4 @@
-name: DOWNLOAD GAMES + COMMIT & PUSH
+name: UPLOAD CHESS GAMES TO GOOGLE DRIVE
 
 on:
   workflow_dispatch:
