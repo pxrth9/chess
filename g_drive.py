@@ -125,7 +125,6 @@ def upload_games(username, year, month, games):
     if not month_folder_id:
         logging.info(f"Folder {month} not found, creating it")
         month_folder_id = create_folder(service, month, parent_folder_id=year_folder_id)
-        logging.info(f"Folder-id: {month_folder_id}")
     logging.info(f"Month Folder-id: {month_folder_id}")
 
     # Upload the games

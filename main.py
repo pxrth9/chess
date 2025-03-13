@@ -56,9 +56,9 @@ def main(player, month, year):
     logging.info(f"{len(games)} games downloaded successfully")
 
     # Return the status and message for the player
-    status = f"Player Name: {player_name}.\n"
-    message = f"Job Status: Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}.\n"
-    message += f"{len(games)} games downloaded successfully for {month}/{year}."
+    message = f"Player Name: {player_name}.\n"
+    message += f"Job Status: Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}.\n"
+    message += f"{len(games)} games downloaded successfully for {month}/{year}.\n"
 
     return message
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         all_messages.append(message)
 
     # Send the email with all messages
-    final_message = "\n\n".join(all_messages)
+    final_message = "\n".join(all_messages)
     is_success = send_email("GitHub Action -- Chess Games", final_message)
 
     if not is_success:
