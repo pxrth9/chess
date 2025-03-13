@@ -8,6 +8,7 @@ import logging
 from googleapiclient.http import MediaIoBaseUpload
 
 from b_64 import decode_token
+import threading
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -64,32 +65,48 @@ def create_folder(service, folder_name, parent_folder_id=None):
 
 
 def upload_files_to_drive(service, games, folder_id):
-    logging.info(f"Uploading to folder-id: {folder_id}")
-    for idx, game in enumerate(games):
-        file_name = f"{idx}.pgn"
+  logging.info(f"Uploading to folder-id: {folder_id}")
 
-        # Create an in-memory file using BytesIO
-        file_stream = io.BytesIO(game.encode("utf-8"))
+  def upload_file(idx, game):
+    file_name = f"{idx}.pgn"
 
-        # Prepare file metadata and media upload
-        file_metadata = {"name": file_name, "parents": [folder_id]}
-        media = MediaIoBaseUpload(file_stream, mimetype="application/x-chess-pgn")
+    # Create an in-memory file using BytesIO
+    file_stream = io.BytesIO(game.encode("utf-8"))
 
-        # Upload the file
-        _ = (
-            service.files()
-            .create(
-                body=file_metadata,
-                media_body=media,
-                fields="id",
-                supportsAllDrives=True,
-            )
-            .execute()
-        )
+    # Prepare file metadata and media upload
+    file_metadata = {"name": file_name, "parents": [folder_id]}
+    media = MediaIoBaseUpload(file_stream, mimetype="application/x-chess-pgn")
 
-        # Close the in-memory file
-        file_stream.close()
+    # Upload the file
+    _ = (
+      service.files()
+      .create(
+        body=file_metadata,
+        media_body=media,
+        fields="id",
+        supportsAllDrives=True,
+      )
+      .execute()
+    )
 
+    # Close the in-memory file
+    file_stream.close()
+
+  threads = []
+  for idx, game in enumerate(games):
+    thread = threading.Thread(target=upload_file, args=(idx, game))
+    threads.append(thread)
+    thread.start()
+
+    # Limit to 6 concurrent threads
+    if len(threads) >= 6:
+      for t in threads:
+        t.join()
+      threads = []
+
+  # Join any remaining threads
+  for t in threads:
+    t.join()
 
 def upload_games(username, year, month, games):
     # Get the service
