@@ -49,5 +49,5 @@ jobs:
           CHESS_USERS: ${{ vars.CHESS_USERS }}
         run: |
           source venv/bin/activate
-          python main.py "${{ steps.calculate.outputs.month}}" ${{ steps.calculate.outputs.year}}
+          python src/main.py "${{ steps.calculate.outputs.month}}" ${{ steps.calculate.outputs.year}}
         working-directory: ${{ github.workspace }}

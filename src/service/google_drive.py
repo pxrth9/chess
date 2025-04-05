@@ -4,14 +4,10 @@ import os
 import sys
 import io
 import json
-import logging
 from googleapiclient.http import MediaIoBaseUpload
+from utils.logger import logger as log
 
-from b_64 import decode_token
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+from utils.b_64 import decode_token
 
 # Constants
 DEFAULT_FOLDER_NAME = "Chess"
@@ -36,7 +32,7 @@ def get_drive_service():
         )
         return build("drive", "v3", credentials=credentials)
     except Exception as e:
-        logging.error(f"Failed to initialize Google Drive service: {e}")
+        log.error(f"Failed to initialize Google Drive service: {e}")
         sys.exit(1)
 
 
@@ -58,7 +54,7 @@ def get_folder_id(service, folder_name, parent_folder_id=None):
         items = results.get("files", [])
         return items[0]["id"] if items else None
     except Exception as e:
-        logging.error(f"Error retrieving folder ID for '{folder_name}': {e}")
+        log.error(f"Error retrieving folder ID for '{folder_name}': {e}")
         return None
 
 
@@ -76,20 +72,20 @@ def create_folder(service, folder_name, parent_folder_id=None):
         )
         return file.get("id")
     except Exception as e:
-        logging.error(f"Error creating folder '{folder_name}': {e}")
+        log.error(f"Error creating folder '{folder_name}': {e}")
         sys.exit(1)
 
 
 def get_or_create_folder(service, folder_name, parent_folder_id=None):
     folder_id = get_folder_id(service, folder_name, parent_folder_id)
     if not folder_id:
-        logging.info(f"Folder '{folder_name}' not found, creating it.")
+        log.info(f"Folder '{folder_name}' not found, creating it.")
         folder_id = create_folder(service, folder_name, parent_folder_id)
     return folder_id
 
 
 def upload_files_to_drive(service, games, folder_id):
-    logging.info(f"Uploading to folder ID: {folder_id}")
+    log.info(f"Uploading to folder ID: {folder_id}")
     for idx, game in enumerate(games):
         file_name = f"{idx}.pgn"
         try:
@@ -106,7 +102,7 @@ def upload_files_to_drive(service, games, folder_id):
                     supportsAllDrives=True,
                 ).execute()
         except Exception as e:
-            logging.error(f"Error uploading file '{file_name}': {e}")
+            log.error(f"Error uploading file '{file_name}': {e}")
 
 
 def upload_games(username, year, month, games):
@@ -122,5 +118,5 @@ def upload_games(username, year, month, games):
         # Upload the games
         upload_files_to_drive(service, games, month_folder_id)
     except Exception as e:
-        logging.error(f"Error during game upload process: {e}")
+        log.error(f"Error during game upload process: {e}")
         sys.exit(1)

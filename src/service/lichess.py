@@ -1,14 +1,9 @@
 import berserk
 import os
-import logging
 from datetime import datetime
 import calendar
-
-from b_64 import decode_token
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+from utils.logger import logger as log
+from utils.b_64 import decode_token
 
 # Environment variable
 LICHESS_TOKEN = os.environ.get("LICHESS_TOKEN") or ""
@@ -33,17 +28,17 @@ def get_month_start_end_timestamps(year, month):
 
         return start, end
     except ValueError as e:
-        logging.error(f"Invalid year or month provided: {year}/{month}. Error: {e}")
+        log.error(f"Invalid year or month provided: {year}/{month}. Error: {e}")
         raise
 
 
 def download_games_lichess(username, year, month):
     if not LICHESS_TOKEN:
-        logging.error("LICHESS_TOKEN environment variable is not set.")
+        log.error("LICHESS_TOKEN environment variable is not set.")
         return None, False
 
     try:
-        logging.info(
+        log.info(
             f"Downloading games from Lichess for {username} for {month}/{year}"
         )
         token = decode_token(LICHESS_TOKEN)
@@ -63,15 +58,15 @@ def download_games_lichess(username, year, month):
         games = list(games_resp)
 
         if not games:
-            logging.info(f"Lichess: No games found for {username} in {month}/{year}.")
+            log.info(f"Lichess: No games found for {username} in {month}/{year}.")
             return None, False
 
-        logging.info(f"Downloaded {len(games)} games from Lichess for {username}")
+        log.info(f"Downloaded {len(games)} games from Lichess for {username}")
         return games, True
     except berserk.exceptions.ResponseError as e:
-        logging.error(f"Lichess API error for {username}: {e}")
+        log.error(f"Lichess API error for {username}: {e}")
     except Exception as e:
-        logging.error(
+        log.error(
             f"An unexpected error occurred while downloading games for {username}: {e}"
         )
 

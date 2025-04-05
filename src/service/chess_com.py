@@ -1,16 +1,12 @@
 import requests
-import logging
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+from utils.logger import logger as log
 
 BASE_URL = "https://api.chess.com/pub/player/{PLAYER_USERNAME}/"
 GAMES_MONTHLY_URL = "games/{YYYY}/{MM}"
 
 
 def download_games_chesscom(username, year, month):
-    logging.info(f"Downloading games from Chess.com for {username} for {month}/{year}")
+    log.info(f"Downloading games from Chess.com for {username} for {month}/{year}")
     # Construct the URL
     request_url = BASE_URL.format(PLAYER_USERNAME=username) + GAMES_MONTHLY_URL.format(
         YYYY=year, MM=month
@@ -23,7 +19,7 @@ def download_games_chesscom(username, year, month):
     )
 
     if response.status_code not in [200, 204]:
-        logging.error("Error in fetching the games from Chess.com")
+        log.error("Error in fetching the games from Chess.com")
         return None, False
 
     games = list()
@@ -34,8 +30,8 @@ def download_games_chesscom(username, year, month):
             continue
         games.append(game_pgn)
     if not games:
-        logging.info("Chesscom: No games found!")
+        log.info("Chesscom: No games found!")
         return None, False
 
-    logging.info(f"Downloaded {len(games)} games from Chess.com for {username}")
+    log.info(f"Downloaded {len(games)} games from Chess.com for {username}")
     return games, True

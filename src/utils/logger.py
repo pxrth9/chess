@@ -5,7 +5,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",  # Define the log format
 )
 
-logger = logging.getLogger("musync")  # Use a custom name for the logger
+logger = logging.getLogger("gh-chess")  # Use a custom name for the logger
 
 
 def set_debug_mode():
