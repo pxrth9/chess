@@ -18,7 +18,7 @@ except Exception as e:
     sys.exit(1)
 
 DEFAULT_CONCURRENT_USERS = int(os.environ.get("CONCURRENT_USERS", 10))
-DEFAULT_CONCURRENT_UPLOADS = int(os.environ.get("CONCURRENT_UPLOADS", 50))
+DEFAULT_CONCURRENT_UPLOADS = int(os.environ.get("CONCURRENT_UPLOADS", 25))
 
 
 def process_player(player, month, year):
@@ -59,6 +59,7 @@ def process_player(player, month, year):
     # Upload games to Google Drive
     try:
         concurrent_uploads = min(DEFAULT_CONCURRENT_UPLOADS, len(games))
+        log.info(f"Concurrent uploads: {concurrent_uploads}")
         log.info(f"Uploading games to Google Drive for {player_name}")
         upload_games(player_name, year, month, games, concurrent_uploads)
     except Exception as e:
@@ -85,6 +86,7 @@ def main(month, year):
     all_messages = []
 
     CONCURRENT_USERS = min(DEFAULT_CONCURRENT_USERS, len(CHESS_USERS))
+    log.info(f"Concurrent users: {CONCURRENT_USERS}")
 
     # Process players concurrently
     with ThreadPoolExecutor(max_workers=CONCURRENT_USERS) as executor:
