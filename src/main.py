@@ -8,9 +8,6 @@ from service.google_drive import upload_games
 from concurrent.futures import ThreadPoolExecutor
 from utils.logger import logger as log
 
-# Constants
-DEFAULT_CONCURRENT_USERS = 3
-
 # Load environment variables
 try:
     CHESS_USERS = json.loads(os.environ.get("CHESS_USERS", "[]"))
@@ -20,7 +17,8 @@ except Exception as e:
     log.error(f"Invalid CHESS_USERS environment variable: {e}")
     sys.exit(1)
 
-CONCURRENT_USERS = int(os.environ.get("CONCURRENT_USERS", DEFAULT_CONCURRENT_USERS))
+DEFAULT_CONCURRENT_USERS = int(os.environ.get("CONCURRENT_USERS", 10))
+DEFAULT_CONCURRENT_UPLOADS = int(os.environ.get("CONCURRENT_UPLOADS", 50))
 
 
 def process_player(player, month, year):
@@ -60,8 +58,9 @@ def process_player(player, month, year):
 
     # Upload games to Google Drive
     try:
+        concurrent_uploads = min(DEFAULT_CONCURRENT_UPLOADS, len(games))
         log.info(f"Uploading games to Google Drive for {player_name}")
-        upload_games(player_name, year, month, games)
+        upload_games(player_name, year, month, games, concurrent_uploads)
     except Exception as e:
         log.error(f"Error uploading games to Google Drive for {player_name}: {e}")
 
@@ -85,11 +84,14 @@ def main(month, year):
 
     all_messages = []
 
+    CONCURRENT_USERS = min(DEFAULT_CONCURRENT_USERS, len(CHESS_USERS))
+
     # Process players concurrently
     with ThreadPoolExecutor(max_workers=CONCURRENT_USERS) as executor:
         try:
             results = executor.map(
-                lambda player: process_player(player, month, year), CHESS_USERS
+                lambda player: process_player(player, month, year),
+                CHESS_USERS,
             )
             all_messages.extend(results)
         except Exception as e:

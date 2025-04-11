@@ -1,3 +1,6 @@
+import concurrent
+import random
+import time
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import os
@@ -6,12 +9,15 @@ import io
 import json
 from googleapiclient.http import MediaIoBaseUpload
 from utils.logger import logger as log
+from googleapiclient.errors import HttpError
+
 
 from utils.b_64 import decode_token
 
 # Constants
 DEFAULT_FOLDER_NAME = "Chess"
 FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
+PGN_MIME_TYPE = "application/x-chess-pgn"
 
 
 def get_drive_service():
@@ -86,28 +92,69 @@ def get_or_create_folder(username, service, folder_name, parent_folder_id=None):
     return folder_id
 
 
-def upload_files_to_drive(username, service, games, folder_id):
-    log.info(f"Username: {username}. Uploading to folder ID: {folder_id}")
-    for idx, game in enumerate(games):
-        file_name = f"{idx}.pgn"
+def upload_single_file(service, game, file_name, folder_id, max_attempts=5):
+    attempt = 0
+    delay = 1
+    while attempt < max_attempts:
         try:
-            # Use context manager for file stream
             with io.BytesIO(game.encode("utf-8")) as file_stream:
                 file_metadata = {"name": file_name, "parents": [folder_id]}
-                media = MediaIoBaseUpload(
-                    file_stream, mimetype="application/x-chess-pgn"
+                media = MediaIoBaseUpload(file_stream, mimetype=PGN_MIME_TYPE)
+                response = (
+                    service.files()
+                    .create(
+                        body=file_metadata,
+                        media_body=media,
+                        fields="id",
+                        supportsAllDrives=True,
+                    )
+                    .execute()
                 )
-                service.files().create(
-                    body=file_metadata,
-                    media_body=media,
-                    fields="id",
-                    supportsAllDrives=True,
-                ).execute()
+                return response
+        except HttpError as e:
+            # Only retry if we see certain status codes (e.g., rate limit and server errors)
+            if e.resp.status in [403, 429, 500, 503]:
+                attempt += 1
+                log.warning(
+                    f"Attempt {attempt} for {file_name} failed with HTTP status {e.resp.status}. "
+                    f"Retrying in {delay} seconds..."
+                )
+                # Wait with a delay and a slight random jitter
+                time.sleep(delay + random.uniform(0, 0.1))
+                delay *= 2  # exponential backoff
+            else:
+                # For other HTTP errors, log and break without retrying
+                log.error(f"Non-retryable HttpError uploading file '{file_name}': {e}")
+                raise
         except Exception as e:
+            # For non-HTTP errors, do not retry
             log.error(f"Error uploading file '{file_name}': {e}")
+            raise
+
+    log.error(f"Max attempts reached for {file_name}. Giving up.")
+    return None
 
 
-def upload_games(username, year, month, games):
+def upload_files_to_drive(username, service, games, folder_id, concurent_uploads):
+    log.info(
+        f"Username: {username}. Starting upload of {len(games)} files to folder ID: {folder_id}"
+    )
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=concurent_uploads
+    ) as executor:
+        futures = []
+        for idx, game in enumerate(games):
+            file_name = f"{idx}.pgn"
+            futures.append(
+                executor.submit(upload_single_file, service, game, file_name, folder_id)
+            )
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()  # This will raise any exception that occurred.
+
+    log.info("All files have been processed.")
+
+
+def upload_games(username, year, month, games, concurrent_uploads):
     service = get_drive_service()
 
     try:
@@ -120,7 +167,9 @@ def upload_games(username, year, month, games):
         month_folder_id = get_or_create_folder(username, service, month, year_folder_id)
 
         # Upload the games
-        upload_files_to_drive(username, service, games, month_folder_id)
+        upload_files_to_drive(
+            username, service, games, month_folder_id, concurrent_uploads
+        )
     except Exception as e:
         log.error(f"Error during game upload process: {e}")
         sys.exit(1)
