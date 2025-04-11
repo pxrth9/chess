@@ -99,13 +99,8 @@ def main(month, year):
     # Send the email with all messages
     final_message = "\n".join(all_messages)
     try:
-        is_success = send_email("GitHub Action -- Chess Games", final_message)
-        if not is_success:
-            log.error("Error sending the email.")
-            sys.exit(1)
-        log.info("Email sent successfully.")
+        send_email("GitHub Action -- Chess Games", final_message)
     except Exception as e:
-        log.error(f"Error sending email: {e}")
         sys.exit(1)
 
 

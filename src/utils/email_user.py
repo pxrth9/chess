@@ -35,9 +35,7 @@ def send_email(
             log.info("Successfully logged in to SMTP server.")
             smtp_server.sendmail(sender, recipient, msg.as_string())
             log.info("Email sent successfully.")
-        return True
     except smtplib.SMTPException as smtp_error:
         log.error(f"SMTP error occurred: {smtp_error}")
     except Exception as e:
         log.error(f"An unexpected error occurred while sending email: {e}")
-    return False
