@@ -38,9 +38,7 @@ def download_games_lichess(username, year, month):
         return None, False
 
     try:
-        log.info(
-            f"Downloading games from Lichess for {username} for {month}/{year}"
-        )
+        log.info(f"Downloading games from Lichess for {username} for {month}/{year}")
         token = decode_token(LICHESS_TOKEN)
         session = berserk.TokenSession(token)
         client = berserk.Client(session=session)

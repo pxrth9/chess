@@ -35,7 +35,6 @@ def process_player(player, month, year):
     chesscom_games, chesscom_is_success = [], False
     if chesscom_username:
         try:
-            log.info(f"Downloading games from Chess.com for {chesscom_username}")
             chesscom_games, chesscom_is_success = download_games_chesscom(
                 username=chesscom_username, year=year, month=month
             )
@@ -48,7 +47,6 @@ def process_player(player, month, year):
     lichess_games, lichess_is_success = [], False
     if lichess_username:
         try:
-            log.info(f"Downloading games from Lichess for {lichess_username}")
             lichess_games, lichess_is_success = download_games_lichess(
                 username=lichess_username, year=year, month=month
             )

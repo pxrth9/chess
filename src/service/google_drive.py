@@ -30,7 +30,7 @@ def get_drive_service():
         credentials = service_account.Credentials.from_service_account_info(
             info=json_info, scopes=scope
         )
-        return build("drive", "v3", credentials=credentials)
+        return build("drive", "v3", credentials=credentials, cache_discovery=False)
     except Exception as e:
         log.error(f"Failed to initialize Google Drive service: {e}")
         sys.exit(1)
@@ -76,16 +76,18 @@ def create_folder(service, folder_name, parent_folder_id=None):
         sys.exit(1)
 
 
-def get_or_create_folder(service, folder_name, parent_folder_id=None):
+def get_or_create_folder(username, service, folder_name, parent_folder_id=None):
     folder_id = get_folder_id(service, folder_name, parent_folder_id)
     if not folder_id:
-        log.info(f"Folder '{folder_name}' not found, creating it.")
+        log.info(
+            f"Username: {username}. Folder '{folder_name}' not found, creating it."
+        )
         folder_id = create_folder(service, folder_name, parent_folder_id)
     return folder_id
 
 
-def upload_files_to_drive(service, games, folder_id):
-    log.info(f"Uploading to folder ID: {folder_id}")
+def upload_files_to_drive(username, service, games, folder_id):
+    log.info(f"Username: {username}. Uploading to folder ID: {folder_id}")
     for idx, game in enumerate(games):
         file_name = f"{idx}.pgn"
         try:
@@ -110,13 +112,15 @@ def upload_games(username, year, month, games):
 
     try:
         # Get or create the folder hierarchy
-        default_folder_id = get_or_create_folder(service, DEFAULT_FOLDER_NAME)
-        user_folder_id = get_or_create_folder(service, username, default_folder_id)
-        year_folder_id = get_or_create_folder(service, year, user_folder_id)
-        month_folder_id = get_or_create_folder(service, month, year_folder_id)
+        default_folder_id = get_or_create_folder(username, service, DEFAULT_FOLDER_NAME)
+        user_folder_id = get_or_create_folder(
+            username, service, username, default_folder_id
+        )
+        year_folder_id = get_or_create_folder(username, service, year, user_folder_id)
+        month_folder_id = get_or_create_folder(username, service, month, year_folder_id)
 
         # Upload the games
-        upload_files_to_drive(service, games, month_folder_id)
+        upload_files_to_drive(username, service, games, month_folder_id)
     except Exception as e:
         log.error(f"Error during game upload process: {e}")
         sys.exit(1)
