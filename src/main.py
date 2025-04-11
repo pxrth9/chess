@@ -69,8 +69,10 @@ def process_player(player, month, year):
     log.info(f"{len(games)} games downloaded successfully for {player_name}")
     message = (
         f"Player Name: {player_name}.\n"
-        f"Job Status: Chess.com: {chesscom_is_success}, Lichess: {lichess_is_success}.\n"
-        f"{len(games)} games downloaded successfully for {month}/{year}.\n"
+        f"Job Status:\n"
+        f"Chess.com: {chesscom_is_success}, Games Downloaded: {len(chesscom_games)}\n"
+        f"Lichess: {lichess_is_success}, Games Downloaded: {len(lichess_games)}.\n"
+        f"{len(games)} total games downloaded successfully for {month}/{year}.\n"
     )
     return message
 
