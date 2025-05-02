@@ -32,7 +32,7 @@ def get_month_start_end_timestamps(year, month):
         raise
 
 
-def download_games_lichess(username, year, month):
+def download_games_lichess(username, year, month, drive, folder_id, start_idx=0):
     if not LICHESS_TOKEN:
         log.error("LICHESS_TOKEN environment variable is not set.")
         return None, False
@@ -47,20 +47,28 @@ def download_games_lichess(username, year, month):
         start, end = get_month_start_end_timestamps(year, month)
 
         # Fetch games
-        games_resp = client.games.export_by_player(
+        games = client.games.export_by_player(
             username=username,
             since=start,
             until=end,
             as_pgn=True,
         )
-        games = list(games_resp)
 
         if not games:
             log.info(f"Lichess: No games found for {username} in {month}/{year}.")
-            return None, False
+            return 0, start_idx, False
 
-        log.info(f"Downloaded {len(games)} games from Lichess for {username}")
-        return games, True
+        total_games = 0
+        for idx, game in enumerate(games):
+            drive.upload_game_to_drive(
+                file_name=start_idx + idx + 1,
+                game=game,
+                folder_id=folder_id,
+            )
+            total_games += 1
+
+        log.info(f"Downloaded {total_games} games from Lichess for {username}")
+        return total_games, total_games + start_idx, True
     except berserk.exceptions.ResponseError as e:
         log.error(f"Lichess API error for {username}: {e}")
     except Exception as e:

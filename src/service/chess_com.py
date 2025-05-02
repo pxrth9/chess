@@ -5,7 +5,7 @@ BASE_URL = "https://api.chess.com/pub/player/{PLAYER_USERNAME}/"
 GAMES_MONTHLY_URL = "games/{YYYY}/{MM}"
 
 
-def download_games_chesscom(username, year, month):
+def download_games_chesscom(username, year, month, drive, folder_id, start_idx=0):
     log.info(f"Downloading games from Chess.com for {username} for {month}/{year}")
     # Construct the URL
     request_url = BASE_URL.format(PLAYER_USERNAME=username) + GAMES_MONTHLY_URL.format(
@@ -22,16 +22,20 @@ def download_games_chesscom(username, year, month):
         log.error("Error in fetching the games from Chess.com")
         return None, False
 
-    games = list()
     games_obj = response.json().get("games", None)
-    for game in games_obj:
+    if not games_obj:
+        log.info("Chesscom: No games found!")
+        return 0, False
+    for idx, game in enumerate(games_obj):
         game_pgn = game.get("pgn", None)
         if not game_pgn:
             continue
-        games.append(game_pgn)
-    if not games:
-        log.info("Chesscom: No games found!")
-        return None, False
+        drive.upload_game_to_drive(
+            file_name=start_idx + idx + 1,
+            game=game_pgn,
+            folder_id=folder_id,
+        )
+    total_games = len(games_obj)
 
-    log.info(f"Downloaded {len(games)} games from Chess.com for {username}")
-    return games, True
+    log.info(f"Downloaded {total_games} games from Chess.com for {username}")
+    return total_games, True

@@ -4,7 +4,7 @@ import json
 from utils.email_user import send_email
 from service.chess_com import download_games_chesscom
 from service.lichess import download_games_lichess
-from service.google_drive import upload_games
+from service.google_drive import GoogleDrive
 from concurrent.futures import ThreadPoolExecutor
 from utils.logger import logger as log
 
@@ -28,15 +28,28 @@ def process_player(player, month, year):
     player_name = player.get("name", "Unknown").upper()
     chesscom_username = player.get("chesscom_username")
     lichess_username = player.get("lichess_username")
+    player_email = player.get("email")
 
     log.info(f"Processing player: {player_name}")
 
+    # Create Google Drive Folder
+    drive = GoogleDrive()
+    month_folder_id = drive.create_folders(
+        username=player_name,
+        year=year,
+        month=month,
+    )
+
     # Download games from Chess.com
-    chesscom_games, chesscom_is_success = [], False
+    num_chesscom_games, chesscom_is_success = 0, False
     if chesscom_username:
         try:
-            chesscom_games, chesscom_is_success = download_games_chesscom(
-                username=chesscom_username, year=year, month=month
+            num_chesscom_games, chesscom_is_success = download_games_chesscom(
+                username=chesscom_username,
+                year=year,
+                month=month,
+                drive=drive,
+                folder_id=month_folder_id,
             )
         except Exception as e:
             log.error(
@@ -44,36 +57,33 @@ def process_player(player, month, year):
             )
 
     # Download games from Lichess
-    lichess_games, lichess_is_success = [], False
+    num_lichess_games, lichess_is_success = 0, False
     if lichess_username:
         try:
-            lichess_games, lichess_is_success = download_games_lichess(
-                username=lichess_username, year=year, month=month
+            num_lichess_games, curr_count, lichess_is_success = download_games_lichess(
+                username=lichess_username,
+                year=year,
+                month=month,
+                drive=drive,
+                folder_id=month_folder_id,
+                start_idx=num_chesscom_games,
             )
         except Exception as e:
             log.error(
                 f"Error downloading games from Lichess for {lichess_username}: {e}"
             )
 
-    # Combine games from both platforms
-    games = chesscom_games + lichess_games
+    message = f"Player Name: {player_name}.\n"
+    if num_chesscom_games > 0:
+        message += f"Chess.com: {chesscom_is_success}, Games Downloaded: {num_chesscom_games}\n"
 
-    # Upload games to Google Drive
-    try:
-        log.info(f"Uploading games to Google Drive for {player_name}")
-        upload_games(player_name, year, month, games)
-    except Exception as e:
-        log.error(f"Error uploading games to Google Drive for {player_name}: {e}")
+    if num_lichess_games > 0:
+        message += (
+            f"Lichess: {lichess_is_success}, Games Downloaded: {num_lichess_games}.\n"
+        )
 
-    # Log and return the status message
-    log.info(f"{len(games)} games downloaded successfully for {player_name}")
-    message = (
-        f"Player Name: {player_name}.\n"
-        f"Job Status:\n"
-        f"Chess.com: {chesscom_is_success}, Games Downloaded: {len(chesscom_games)}\n"
-        f"Lichess: {lichess_is_success}, Games Downloaded: {len(lichess_games)}.\n"
-        f"{len(games)} total games downloaded successfully for {month}/{year}.\n"
-    )
+    message += f"{curr_count} total games downloaded successfully for {player}/{month}/{year}.\n"
+
     return message
 
 
