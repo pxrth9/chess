@@ -82,7 +82,7 @@ def process_player(player, month, year):
             f"Lichess: {lichess_is_success}, Games Downloaded: {num_lichess_games}.\n"
         )
 
-    message += f"{curr_count} total games downloaded successfully for {player}/{month}/{year}.\n"
+    message += f"{curr_count} total games downloaded successfully for {month}/{year}.\n"
 
     # Send email if player has an email address
     if player_email:
