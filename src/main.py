@@ -84,6 +84,17 @@ def process_player(player, month, year):
 
     message += f"{curr_count} total games downloaded successfully for {player}/{month}/{year}.\n"
 
+    # Send email if player has an email address
+    if player_email:
+        try:
+            send_email(
+                subject=f"GitHub Action -- Chess Games for {player_name}",
+                body=message,
+                recipient=player_email,
+            )
+        except Exception as e:
+            log.error(f"Error sending email to {player_email}: {e}")
+
     return message
 
 
